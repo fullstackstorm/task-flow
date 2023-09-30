@@ -79,6 +79,7 @@ class Comment(db.Model, SerializerMixin):
     project_id = Column(Integer, ForeignKey('projects.id'))
 
 class Team(db.Model, SerializerMixin):
+    __tablename__ = 'teams'
     id = Column(Integer, primary_key=True)
     name = Column(String(20), nullable=False)
     description = Column(Text)
