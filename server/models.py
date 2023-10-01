@@ -32,9 +32,9 @@ class User(db.Model, SerializerMixin):
     _password_hash = Column(Text)
 
     teams = relationship('Team', secondary=team_membership, back_populates='users')
-    tasks = relationship('Task', back_populates='users')
+    tasks = relationship('Task', backref='user')
     projects = relationship('Project', secondary=project_membership, back_populates='users')
-    comments = relationship('Comment', backref='users')
+    comments = relationship('Comment', backref='user')
 
     @hybrid_property
     def password_hash(self):
@@ -61,14 +61,14 @@ class Task(db.Model, SerializerMixin):
     due_date = Column(DateTime, nullable=False)
     status = Column(TASK_STATUS) 
     project_id = Column(Integer, ForeignKey('projects.id'))
-    user = relationship('User', back_populates='tasks')
+    user_id = Column(Integer, ForeignKey('users.id'))
 
 class Project(db.Model, SerializerMixin):
     __tablename__ = 'projects'
     id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False)
     description = Column(Text)
-    members = relationship('User', secondary=project_membership, back_populates='projects')
+    users = relationship('User', secondary=project_membership, back_populates='projects')
 
 class Comment(db.Model, SerializerMixin):
     __tablename__ = 'comments'
@@ -83,7 +83,7 @@ class Team(db.Model, SerializerMixin):
     id = Column(Integer, primary_key=True)
     name = Column(String(20), nullable=False)
     description = Column(Text)
-    members = relationship('User', secondary=team_membership, back_populates='teams')
+    users = relationship('User', secondary=team_membership, back_populates='teams')
 
     def __repr__(self):
         return f"Team(id={self.id}, name={self.name})"

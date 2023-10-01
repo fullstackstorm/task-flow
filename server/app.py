@@ -37,7 +37,7 @@ class Signup(Resource):
             return make_response({'message': 'Invalid input'}, 422)
         except Exception as e:
             db.session.rollback()
-            return make_response({'message': 'An error occurred'}),
+            return make_response({'message': 'An error occurred'})
 
 class CheckSession(Resource):
     def get(self):
