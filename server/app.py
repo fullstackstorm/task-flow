@@ -3,7 +3,7 @@
 # Standard library imports
 
 # Remote library imports
-from flask import Flask, request, session, jsonify, make_response
+from flask import request, session, make_response
 from flask_restful import Resource
 from sqlalchemy.exc import IntegrityError
 
@@ -30,7 +30,7 @@ class Signup(Resource):
         try:
             db.session.add(user)
             db.session.commit()
-            return make_response({'message': 'Hooray'}, 201)
+            return make_response({'message': 'Created'}, 201) #Problem child.
         except IntegrityError as e:
             db.session.rollback()
             return make_response({'message': 'Invalid input'}, 422)
@@ -66,14 +66,38 @@ class Logout(Resource):
     def delete(self):
         if session.get('user_id'):
             session['user_id'] = None
-            return make_response({'message': 'Logged out successfully'}, 204)
+            return make_response({'message': 'Logged out successfully'}, 204) #Not returning message
         else:
             return make_response({'error': 'Not logged in'}, 401)
+        
+class DeleteUser(Resource):
+    def delete(self):
+        if session.get('user_id'):
+            user_id = session['user_id']
+            
+            # Delete the user from the database
+            try:
+                user = User.query.get(user_id)
+                if user:
+                    # Remove the user from the session
+                    session.pop('user_id')
+                     # Delete the user from the database
+                    db.session.delete(user)  
+                    db.session.commit()
+                    return {'message': f'Deleted user with ID {user_id}'}
+                else:
+                    return {'message': 'User not found in the database'}
+            except IntegrityError:
+                # Handle database integrity error
+                return {'message': 'Failed to delete user due to database integrity error'}
+        else:
+            return {'message': 'User not authenticated'}
 
 api.add_resource(Signup, '/signup', endpoint='signup')
 api.add_resource(CheckSession, '/check_session', endpoint='check_session')
 api.add_resource(Login, '/login', endpoint='login')
 api.add_resource(Logout, '/logout', endpoint='logout')
+api.add_resource(DeleteUser, '/delete_user', endpoint='delete_user')
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
