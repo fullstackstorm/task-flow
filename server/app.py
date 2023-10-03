@@ -41,11 +41,12 @@ class Signup(Resource):
 
 class CheckSession(Resource):
     def get(self):
-        user_id = session['user_id']
+        user_id = session.get('user_id')
         if user_id:
             user = User.query.filter(User.id == user_id).first()
-            return make_response(user.to_dict(), 200)
-        
+            if user:
+                return make_response(user.to_dict(), 200)
+
         return make_response({}, 401)
 
 class Login(Resource):

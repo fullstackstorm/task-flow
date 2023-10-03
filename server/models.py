@@ -1,7 +1,7 @@
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy import Table, Column, Integer, String, DateTime, ForeignKey, Enum, Text
+from sqlalchemy import Table, Column, Integer, String, DateTime, ForeignKey, Enum, Text, PrimaryKeyConstraint
 from sqlalchemy.orm import relationship
 from enum import Enum as PyEnum
 
@@ -21,7 +21,8 @@ team_membership = Table('team_membership', db.Model.metadata,
 
 project_membership = Table('project_membership', db.Model.metadata,
     Column('user_id', Integer, ForeignKey('users.id'), primary_key=True),
-    Column('project_id', Integer, ForeignKey('projects.id'), primary_key=True)
+    Column('project_id', Integer, ForeignKey('projects.id'), primary_key=True),
+    PrimaryKeyConstraint('user_id', 'project_id')
 )
 
 class User(db.Model, SerializerMixin):

@@ -57,3 +57,32 @@ class TestSignup:
             })
 
             assert(response.status_code == 422)
+
+class TestCheckSession:
+    '''CheckSession resource in app.py'''
+
+    def test_returns_user_json_for_active_session(self):
+        '''returns JSON for the user's data if there is an active session.'''
+        
+        with app.app_context():
+            
+            User.query.delete()
+            db.session.commit()
+        
+        with app.test_client() as client:
+
+            # create a new first record
+            client.post('/signup', json={
+                'username': 'ashketchum',
+                'password': 'pikachu',
+            })
+            
+            with client.session_transaction() as session:
+                
+                session['user_id'] = 1
+
+            response = client.get('/check_session')
+            response_json = response.json
+
+            assert response_json.get('id')== 1
+            assert response_json.get('username')
