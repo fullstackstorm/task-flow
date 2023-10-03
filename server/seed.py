@@ -2,6 +2,7 @@
 
 # Standard library imports
 from random import randint, choice as rc
+from sqlalchemy import delete
 
 # Remote library imports
 from faker import Faker
@@ -13,10 +14,12 @@ from models import *
 fake = Faker()
 
 def clear_existing_data():
+    delete_statement = delete(project_membership)
+    db.session.execute(delete_statement)
+    delete_statement = delete(team_membership)
+    db.session.execute(delete_statement)
     User.query.delete()
-    Team.query(team_membership).delete()
     Team.query.delete()
-    Project.query(project_membership).delete()
     Project.query.delete()
     Task.query.delete()
     Comment.query.delete()
