@@ -30,7 +30,7 @@ class Signup(Resource):
         try:
             db.session.add(user)
             db.session.commit()
-            return make_response({'message': 'Created'}, 201) #Problem child.
+            return make_response(user.to_dict(), 201) #Problem child.
         except IntegrityError as e:
             db.session.rollback()
             return make_response({'message': 'Invalid input'}, 422)
