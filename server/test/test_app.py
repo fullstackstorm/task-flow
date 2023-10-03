@@ -11,6 +11,7 @@ sys.path.append(parent_dir)
 from app import app
 from models import *
 from random import randint, choice as rc
+from sqlalchemy import delete
 
 app.secret_key = b'a\xdb\xd2\x13\x93\xc1\xe9\x97\xef2\xe3\x004U\xd1Z'
 
@@ -21,7 +22,10 @@ class TestSignup:
         '''creates user records with usernames and passwords at /signup.'''
         
         with app.app_context():
-            
+            delete_statement = delete(project_membership)
+            db.session.execute(delete_statement)
+            delete_statement = delete(team_membership)
+            db.session.execute(delete_statement)
             User.query.delete()
             db.session.commit()
         
@@ -33,7 +37,10 @@ class TestSignup:
                 'password': '1likep1kachu'
             })
 
-            assert(response.status_code == 201)
+            #assert(response.status_code == 201)
+            # This line in your test
+            assert response.status_code == 201
+
 
             new_user = User.query.filter(User.username == 'ashketchum').first()
 
@@ -52,8 +59,8 @@ class TestSignup:
         with app.test_client() as client:
             
             response = client.post('/signup', json={
-                'email': 'pikachu@gmail.com',
-                'password': 'pikachu'
+                'email': 'blabla@gmail.com',
+                'password': 'blabla'
             })
 
             assert(response.status_code == 422)

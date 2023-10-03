@@ -3,7 +3,7 @@
 # Standard library imports
 
 # Remote library imports
-from flask import request, session, make_response
+from flask import Flask, request, session, jsonify, make_response
 from flask_restful import Resource
 from sqlalchemy.exc import IntegrityError
 
@@ -20,18 +20,17 @@ def index():
 class Signup(Resource):
     def post(self):
         json = request.get_json()
-        password = json.get('password')
 
         user = User(
             username=json.get('username'),
             email=json.get('email'),
         )
-        user.password_hash = password
+        user.password_hash = json.get('password')
 
         try:
             db.session.add(user)
             db.session.commit()
-            return make_response(user.to_dict(), 201)
+            return make_response({'message': 'Hooray'}, 201)
         except IntegrityError as e:
             db.session.rollback()
             return make_response({'message': 'Invalid input'}, 422)
