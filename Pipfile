@@ -17,6 +17,7 @@ pytest = "*"
 gunicorn = "*"
 psycopg2-binary = "*"
 psycopg2 = "*"
+importlib-metadata = "==6.7.0"
 
 [requires]
 python_full_version = "3.8.13"
