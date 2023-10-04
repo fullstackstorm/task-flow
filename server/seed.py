@@ -34,6 +34,15 @@ def create_fake_users(num_users):
         user.password_hash = fake.password() + 'wrgekhj39479YUIRjikuhw89874325'
         db.session.add(user)
 
+    myUser = User(
+        username="BobBilby",
+        email="someemail@example.com",
+    )
+
+    myUser.password_hash = 'cantalope'
+    db.session.add(myUser)
+    db.session.commit()
+
 def create_fake_teams(num_teams, users):
     for _ in range(num_teams):
         team = Team(
@@ -43,13 +52,37 @@ def create_fake_teams(num_teams, users):
         # Assign random users to the team
         random_users = fake.random_elements(
                 elements=users, 
-                length=fake.random_int(1, len(users)/2)
+                length=fake.random_int(1, int(len(users)/2))
             )
         for user in random_users:
             if user not in team.users:
                 team.users.append(user)
 
         db.session.add(team)
+    
+    teamRocket = Team(
+        name="Team Rocket",
+        description="We steal all of the pokemon. None shall be left."
+    )
+    dreamTeam = Team(
+        name="Dream Team",
+        description="We make your dreams come true."
+    )
+    random_users = fake.random_elements(
+                elements=users, 
+                length=fake.random_int(1, int(len(users)/2))
+            )
+    for user in random_users:
+        if user not in teamRocket.users:
+            teamRocket.users.append(user)
+        if user not in dreamTeam.users:
+            dreamTeam.users.append(user)
+    db.session.add(teamRocket)
+    db.session.add(dreamTeam)
+    myUser = User.query.filter_by(username="BobBilby").first()
+    teamRocket.users.append(myUser)
+    dreamTeam.users.append(myUser)
+    db.session.commit()
 
 def create_fake_projects(num_projects, users):
     for _ in range(num_projects):
@@ -62,6 +95,30 @@ def create_fake_projects(num_projects, users):
         project.users.extend(random_users)
 
         db.session.add(project)
+    projectPikachu = Project(
+        name="Project Pikachu",
+        description="Capture pikachu from Ash",
+    )
+    projectMew = Project(
+        name="Project Mew",
+        description="Capture the elusive Mew.",
+    )
+    projectIsland = Project(
+        name="Island Hills",
+        description="Create a personal island.",
+    )
+    projectDream = Project(
+        name="Dream Booster",
+        description="Create a pharmaceutical that enhances dreaming.",
+    )
+    
+    myUser = User.query.filter_by(username="BobBilby").first()
+    projectPikachu.users.append(myUser)
+    projectMew.users.append(myUser)
+    projectIsland.users.append(myUser)
+    projectDream.users.append(myUser)
+    db.session.add_all([projectPikachu, projectMew, projectIsland, projectDream])
+    db.session.commit()
 
 def create_fake_tasks(num_tasks, users, projects):
     for _ in range(num_tasks):
