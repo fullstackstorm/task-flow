@@ -10,7 +10,7 @@ function Header() {
                 </NavLink>
             </div>
             <div>
-                <NavLink to="/get-started" exact>
+                <NavLink to="/signup" exact>
                     Get Started
                 </NavLink>
             </div>
