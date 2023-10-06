@@ -1,82 +1,68 @@
-import React, { useState } from "react";
-import { useFormik } from "formik";
+import React from "react";
+import { Formik, Field, Form, ErrorMessage } from "formik";
+import * as Yup from "yup";
 
 function SignUpForm() {
-  const [formData, setFormData] = useState({
+  const initialValues = {
     email: "",
     username: "",
     password: "",
-  });
-
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const validationSchema = Yup.object({
+    email: Yup.string().email("Invalid email address").required("Required"),
+    username: Yup.string().required("Required"),
+    password: Yup.string().required("Required"),
+  });
 
+  const onSubmit = async (values, { setSubmitting }) => {
     // Send a POST request to the /signup endpoint
     try {
-      const response = await fetch("http://127.0.0.1:5555/signup", {
+      await fetch("http://127.0.0.1:5555/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(values),
       });
-
-      if (response.status === 201) {
-        // Successful signup
-        // You can redirect the user to a login page or display a success message
-      } else {
-        // Handle signup errors (e.g., validation errors or server errors)
-        // Display an error message to the user
-      }
     } catch (error) {
       console.error("Error:", error);
-      // Handle network or request-related errors
     }
+    setSubmitting(false);
   };
 
   return (
     <div className="form">
       <h2>Sign Up</h2>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Email:
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-          />
-        </label>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={onSubmit}
+      >
+        {() => (
+          <Form>
+            <div className="form-field">
+              <label>Email:</label>
+              <Field type="email" name="email" />
+              <ErrorMessage name="email" component="div" className="error" />
+            </div>
 
-        <label>
-          Username:
-          <input
-            type="text"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-          />
-        </label>
+            <div className="form-field">
+              <label>Username:</label>
+              <Field type="text" name="username" />
+              <ErrorMessage name="username" component="div" className="error" />
+            </div>
 
-        <label>
-          Password:
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-          />
-        </label>
-        <button type="submit">Sign Up</button>
-      </form>
+            <div className="form-field">
+              <label>Password:</label>
+              <Field type="password" name="password" />
+              <ErrorMessage name="password" component="div" className="error" />
+            </div>
+
+            <button type="submit">Sign Up</button>
+          </Form>
+        )}
+      </Formik>
     </div>
   );
 }
