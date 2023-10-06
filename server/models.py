@@ -27,6 +27,9 @@ project_membership = Table('project_membership', db.Model.metadata,
 
 class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
+
+    serialize_rules = ('-teams.users', '-tasks.user', '-projects.users', '-comments.user',)
+
     id = Column(Integer, primary_key=True)
     username = Column(String, nullable=False, unique=True)
     email = Column(String, nullable=False, unique=True)
@@ -56,6 +59,9 @@ class User(db.Model, SerializerMixin):
     
 class Task(db.Model, SerializerMixin):
     __tablename__ = 'tasks'
+
+    serialize_rules = ('-users.tasks', '-projects.tasks',)
+
     id = Column(Integer, primary_key=True)
     title = Column(String(100), nullable=False)
     description = Column(Text)
@@ -66,6 +72,9 @@ class Task(db.Model, SerializerMixin):
 
 class Project(db.Model, SerializerMixin):
     __tablename__ = 'projects'
+
+    serialize_rules = ('-users.projects',)
+
     id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False)
     description = Column(Text)
@@ -73,6 +82,9 @@ class Project(db.Model, SerializerMixin):
 
 class Comment(db.Model, SerializerMixin):
     __tablename__ = 'comments'
+
+    serialize_rules = ('-users.comments', '-tasks.comments')
+
     id = Column(Integer, primary_key=True)
     text = Column(Text, nullable=False)
     user_id = Column(Integer, ForeignKey('users.id'))
@@ -81,6 +93,9 @@ class Comment(db.Model, SerializerMixin):
 
 class Team(db.Model, SerializerMixin):
     __tablename__ = 'teams'
+
+    serialize_rules = ('-users.teams',)
+
     id = Column(Integer, primary_key=True)
     name = Column(String(20), nullable=False)
     description = Column(Text)
