@@ -1,8 +1,10 @@
 import React from "react";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import { useHistory } from "react-router-dom";
 
 function SignUpForm() {
+  const history = useHistory();
   const initialValues = {
     email: "",
     username: "",
@@ -29,6 +31,20 @@ function SignUpForm() {
       console.error("Error:", error);
     }
     setSubmitting(false);
+
+    try {
+      await fetch("http://127.0.0.1:5555/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+    } catch (error) {
+      console.error("Error:", error);
+    }
+
+    history.push("/dashboard")
   };
 
   return (
