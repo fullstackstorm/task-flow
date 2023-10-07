@@ -34,7 +34,7 @@ function LoginForm() {
 
   return (
     <div className="form">
-      <h2>Sign Up</h2>
+      <h2>Login</h2>
       <Formik
         initialValues={initialValues}
         validationSchema={validationSchema}
@@ -54,7 +54,7 @@ function LoginForm() {
               <ErrorMessage name="password" component="div" className="error" />
             </div>
 
-            <button type="submit">Sign Up</button>
+            <button type="submit">Login</button>
           </Form>
         )}
       </Formik>

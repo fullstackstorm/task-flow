@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 
 const LeftNavContainer = styled.nav`
   width: 250px;
@@ -54,7 +55,7 @@ function LeftNavigationBar() {
     <LeftNavContainer>
       <NavList>
         <NavItem>
-          <a href="#">Home</a>
+          <Link to="/dashboard">Home</Link>
         </NavItem>
         <NavItem onClick={toggleForm}>
           <div>
