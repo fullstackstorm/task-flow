@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Switch, Route } from "react-router-dom";
 import Header from "./Header";
 import SignUpPage from "./SignUpPage";
+import LoginPage from "./LoginPage";
 import Dashboard from "./Dashboard";
 
-function App() {
+function App()
+{
   return (
     <div className="app">
       <Header />
@@ -12,6 +14,9 @@ function App() {
         <Route exact path="/"></Route>
         <Route exact path="/signup">
           <SignUpPage />
+        </Route>
+        <Route exact path="/login">
+          <LoginPage />
         </Route>
         <Route exact path="/dashboard">
           <Dashboard />
