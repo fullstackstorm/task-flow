@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Switch, Route } from "react-router-dom";
 import Header from "./Header";
+import MainPage from "./MainPage";
 import SignUpPage from "./SignUpPage";
 import LoginPage from "./LoginPage";
 import Dashboard from "./Dashboard";
@@ -11,7 +12,9 @@ function App()
     <div className="app">
       <Header />
       <Switch>
-        <Route exact path="/"></Route>
+        <Route exact path="/">
+          <MainPage />
+        </Route>
         <Route exact path="/signup">
           <SignUpPage />
         </Route>
