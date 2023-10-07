@@ -92,12 +92,19 @@ class DeleteUser(Resource):
                 return {'message': 'Failed to delete user due to database integrity error'}
         else:
             return {'message': 'User not authenticated'}
+        
+class TaskResource(Resource):
+    def get(self):
+        tasks = Task.query.all()
+        tasks_dict = [task.to_dict() for task in tasks]
+        return make_response(tasks_dict, 200)
 
 api.add_resource(Signup, '/signup', endpoint='signup')
 api.add_resource(CheckSession, '/check_session', endpoint='check_session')
 api.add_resource(Login, '/login', endpoint='login')
 api.add_resource(Logout, '/logout', endpoint='logout')
 api.add_resource(DeleteUser, '/delete_user', endpoint='delete_user')
+api.add_resource(TaskResource, '/tasks', endpoint='tasks')
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
