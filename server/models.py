@@ -60,7 +60,7 @@ class User(db.Model, SerializerMixin):
 class Task(db.Model, SerializerMixin):
     __tablename__ = 'tasks'
 
-    serialize_rules = ('-user.tasks', '-project.tasks', '-user',)
+    serialize_only = ('title', 'description', 'due_date','status',)
 
     id = Column(Integer, primary_key=True)
     title = Column(String(100), nullable=False)
@@ -71,20 +71,13 @@ class Task(db.Model, SerializerMixin):
     project_id = Column(Integer, ForeignKey('projects.id'))
     project = relationship('Project', back_populates='tasks')
 
-    def to_dict(self, exclude_user=True):
-        task_dict = super().to_dict()
-        if exclude_user:
-            task_dict.pop('user', None)
-        task_dict.pop('project', None)  # Exclude the 'project' attribute
-        return task_dict
-
     def __repr__(self):
         return f"Task(id={self.id}, title={self.title})"
 
 class Project(db.Model, SerializerMixin):
     __tablename__ = 'projects'
 
-    serialize_rules = ('-users.projects', '-tasks.project', '-tasks.project.project', '-users.tasks',)
+    serialize_only = ('name', 'description','tasks',)
 
     id = Column(Integer, primary_key=True)
     name = Column(String(100), nullable=False)
@@ -92,10 +85,7 @@ class Project(db.Model, SerializerMixin):
     users = relationship('User', secondary=project_membership, back_populates='projects')
     tasks = relationship('Task', back_populates='project')
 
-    def to_dict(self):
-        project_dict = super().to_dict()
-        project_dict['tasks'] = [task.to_dict(exclude_user=True) for task in self.tasks]
-        return project_dict
+
 
 class Comment(db.Model, SerializerMixin):
     __tablename__ = 'comments'
