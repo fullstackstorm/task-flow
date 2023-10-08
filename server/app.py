@@ -120,6 +120,23 @@ class TaskResource(Resource):
         except Exception as e:
             return make_response({"error": str(e)}, 500)
         
+class ProjectsResource(Resource):
+    def get(self):
+        try:
+            user_id = session.get("user_id")
+
+            if user_id is None:
+                return make_response({"message": "Authentication required"}, 401)
+
+            projects = Project.query.filter(Project.users.any(id=user_id)).all()
+
+            projects_dict = [project.to_dict() for project in projects]
+
+            return make_response(projects_dict, 200)
+
+        except Exception as e:
+            return make_response({"error": str(e)}, 500)
+        
 
 
 api.add_resource(Signup, '/signup', endpoint='signup')
@@ -128,6 +145,7 @@ api.add_resource(Login, '/login', endpoint='login')
 api.add_resource(Logout, '/logout', endpoint='logout')
 api.add_resource(DeleteUser, '/delete_user', endpoint='delete_user')
 api.add_resource(TaskResource, '/tasks', endpoint='tasks')
+api.add_resource(ProjectsResource, '/projects', endpoint='projects')
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
