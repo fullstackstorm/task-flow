@@ -22,6 +22,15 @@ const NavItem = styled.li`
   cursor: pointer;
   display: flex;
   align-items: center;
+  a {
+    text-decoration: none;
+    color: #fff;
+    font-weight: bold;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
 `;
 
 const SubList = styled.ul`
@@ -40,20 +49,24 @@ const HomeLink = styled(Link)`
   text-decoration: none; /* Remove the default underline */
 `;
 
-function LeftNavigationBar() {
+function LeftNavigationBar()
+{
   const [teamsOpen, setTeamsOpen] = useState(false);
   const [projectsOpen, setProjectsOpen] = useState(false);
   const [formOpen, setFormOpen] = useState(false);
 
-  const toggleTeams = () => {
+  const toggleTeams = () =>
+  {
     setTeamsOpen(!teamsOpen);
   };
 
-  const toggleProjects = () => {
+  const toggleProjects = () =>
+  {
     setProjectsOpen(!projectsOpen);
   };
 
-  const toggleForm = () => {
+  const toggleForm = () =>
+  {
     setFormOpen(!formOpen);
   };
 
@@ -69,7 +82,9 @@ function LeftNavigationBar() {
             {formOpen ? "▼" : "▶"}
           </div>
           <SubList isOpen={formOpen}>
-            <SubItem>Team</SubItem>
+            <SubItem>
+              <Link to="/createteam">Team</Link>
+            </SubItem>
             <SubItem>Project</SubItem>
           </SubList>
         </NavItem>

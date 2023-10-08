@@ -4,6 +4,8 @@ import Header from "./Header";
 import MainPage from "./MainPage";
 import SignUpPage from "./SignUpPage";
 import LoginPage from "./LoginPage";
+import CreateTeamPage from "./CreateTeamPage";
+import ProjectPage from "./ProjectPage";
 import Dashboard from "./Dashboard";
 
 function App()
@@ -23,6 +25,12 @@ function App()
         </Route>
         <Route exact path="/dashboard">
           <Dashboard />
+        </Route>
+        <Route exact path="/createteam">
+          <CreateTeamPage />
+        </Route>
+        <Route exact path="/project/:id">
+          <ProjectPage />
         </Route>
       </Switch>
     </div>
