@@ -49,15 +49,6 @@ const SubmitButton = styled.button`
   cursor: pointer;
 `;
 
-const DescriptionTextarea = styled.textarea`
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  height: auto;
-  min-height: 150px; /* Adjust this value as needed */
-`;
-
 function CreateTeamForm()
 {
     const history = useHistory();
