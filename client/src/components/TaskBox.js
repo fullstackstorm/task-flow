@@ -1,12 +1,47 @@
-import React from "react";
+import React from 'react';
+import styled from 'styled-components';
+
+const BoxContainer = styled.div`
+  background-color: #f5f5f5;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+const Heading = styled.h2`
+  font-size: 24px;
+  margin-bottom: 20px;
+`;
+
+const Table = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+`;
+
+const TableHead = styled.thead`
+  background-color: #3498db;
+  color: #fff;
+`;
+
+const TableRow = styled.tr`
+  border-bottom: 1px solid #ddd;
+`;
+
+const TableHeader = styled.th`
+  padding: 10px;
+  text-align: left; // Make the column headings left-aligned
+`;
+
+const TableData = styled.td`
+  padding: 10px;
+`;
 
 function TaskBox({ tasks }) {
-  // Sort tasks by due date, with the soonest tasks coming first
   const sortedTasks = tasks
-    .filter(task => task.status !== 'completed') // Filter out completed tasks
-    .sort((a, b) => new Date(a.due_date) - new Date(b.due_date)); // Sort by due date
+    .filter((task) => task.status !== 'completed')
+    .sort((a, b) => new Date(a.due_date) - new Date(b.due_date));
 
-  // Display a maximum of six tasks or all available tasks, whichever is less
   const displayedTasks = sortedTasks.slice(0, 6);
 
   const formatDate = (isoDate) => {
@@ -15,27 +50,27 @@ function TaskBox({ tasks }) {
   };
 
   return (
-    <div>
-      <h2>My Tasks</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Task</th>
-            <th>Due Date</th>
-            <th>Status</th>
-          </tr>
-        </thead>
+    <BoxContainer>
+      <Heading>My Tasks</Heading>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableHeader>Task</TableHeader>
+            <TableHeader>Due Date</TableHeader>
+            <TableHeader>Status</TableHeader>
+          </TableRow>
+        </TableHead>
         <tbody>
           {displayedTasks.map((task) => (
-            <tr key={task.id}>
-              <td>{task.title}</td>
-              <td>{formatDate(task.due_date)}</td>
-              <td>{task.status}</td>
-            </tr>
+            <TableRow key={task.id}>
+              <TableData>{task.title}</TableData>
+              <TableData>{formatDate(task.due_date)}</TableData>
+              <TableData>{task.status}</TableData>
+            </TableRow>
           ))}
         </tbody>
-      </table>
-    </div>
+      </Table>
+    </BoxContainer>
   );
 }
 
