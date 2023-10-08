@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
 const LeftNavContainer = styled.nav`
   width: 250px;
@@ -56,6 +56,7 @@ function LeftNavigationBar()
   const [formOpen, setFormOpen] = useState(false);
   const [teamData, setTeamData] = useState([]);
   const [projectData, setProjectData] = useState([]);
+  const history = useHistory();
 
   const toggleTeams = () =>
   {
