@@ -17,7 +17,7 @@ function LoginForm() {
 
   const onSubmit = async (values, { setSubmitting }) => {
     try {
-      await fetch("http://127.0.0.1:5555/login", {
+      await fetch("/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

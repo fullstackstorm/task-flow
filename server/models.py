@@ -70,6 +70,9 @@ class Task(db.Model, SerializerMixin):
     project_id = Column(Integer, ForeignKey('projects.id'))
     user_id = Column(Integer, ForeignKey('users.id'))
 
+    def __repr__(self):
+        return f"Task(id={self.id}, title={self.title})"
+
 class Project(db.Model, SerializerMixin):
     __tablename__ = 'projects'
 

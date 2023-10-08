@@ -20,7 +20,7 @@ function SignUpForm() {
   const onSubmit = async (values, { setSubmitting }) => {
     // Send a POST request to the /signup endpoint
     try {
-      await fetch("http://127.0.0.1:5555/signup", {
+      await fetch("/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -32,7 +32,7 @@ function SignUpForm() {
     }
     
     try {
-      await fetch("http://127.0.0.1:5555/login", {
+      await fetch("/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

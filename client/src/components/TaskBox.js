@@ -1,7 +1,7 @@
 import React from "react";
 
 function TaskBox({ tasks }) {
-  console.log("hello" + tasks);
+  console.log("Task Box:" + tasks);
   // Sort tasks by due date, with the soonest tasks coming first
   const sortedTasks = tasks
     .filter(task => task.status !== 'completed') // Filter out completed tasks

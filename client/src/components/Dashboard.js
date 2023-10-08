@@ -15,7 +15,7 @@ function Dashboard() {
   const [tasks, setTasks] = useState([]);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:5555/tasks")
+    fetch("/tasks")
       .then((res) => res.json())
       .then((data) => setTasks(data))
       .catch((err) => console.error('Error fetching tasks for task box:', err));
