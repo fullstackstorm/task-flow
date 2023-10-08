@@ -88,6 +88,7 @@ class Project(db.Model, SerializerMixin):
     name = Column(String(100), nullable=False)
     description = Column(Text)
     users = relationship('User', secondary=project_membership, back_populates='projects')
+    team_id = Column(Integer, ForeignKey('teams.id')) 
 
 class Comment(db.Model, SerializerMixin):
     __tablename__ = 'comments'
@@ -109,6 +110,7 @@ class Team(db.Model, SerializerMixin):
     name = Column(String(20), nullable=False)
     description = Column(Text)
     users = relationship('User', secondary=team_membership, back_populates='teams')
+    projects = relationship('Project', backref='team')
 
     def __repr__(self):
         return f"Team(id={self.id}, name={self.name})"
