@@ -98,7 +98,9 @@ function LeftNavigationBar()
             <SubItem>
               <Link to="/createteam">Team</Link>
             </SubItem>
-            <SubItem>Project</SubItem>
+            <SubItem>
+              <Link to="/createproject">Project</Link>
+            </SubItem>
           </SubList>
         </NavItem>
         <NavItem onClick={toggleTeams}>

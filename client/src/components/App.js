@@ -5,7 +5,7 @@ import MainPage from "./MainPage";
 import SignUpPage from "./SignUpPage";
 import LoginPage from "./LoginPage";
 import CreateTeamPage from "./CreateTeamPage";
-import ProjectPage from "./ProjectPage";
+import CreateProjectPage from "./CreateProjectPage";
 import Dashboard from "./Dashboard";
 
 function App()
@@ -29,8 +29,8 @@ function App()
         <Route exact path="/createteam">
           <CreateTeamPage />
         </Route>
-        <Route exact path="/project/:id">
-          <ProjectPage />
+        <Route exact path="/createproject">
+          <CreateProjectPage />
         </Route>
       </Switch>
     </div>
