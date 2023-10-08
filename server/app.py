@@ -220,7 +220,24 @@ class TeamsResource(Resource):
         except Exception as e:
             return make_response({"error": str(e)}, 500)
         
+class ProjectIndex(Resource):
+    def get(self, project_id):
+        try:
+            # Retrieve user_id from the session or authentication token
+            user_id = session.get("user_id")
 
+            if user_id is None:
+                return make_response({"message": "Authentication required"}, 401)
+
+            project = Project.query.filter_by(id=project_id).first()
+
+            if project:
+                return make_response(project.to_dict(), 200)
+            else:
+                return make_response({"message": "Project not found"}, 404)
+
+        except Exception as e:
+            return make_response({"error": str(e)}, 500)
 
 api.add_resource(Signup, '/signup', endpoint='signup')
 api.add_resource(CheckSession, '/check_session', endpoint='check_session')
@@ -230,6 +247,7 @@ api.add_resource(DeleteUser, '/delete_user', endpoint='delete_user')
 api.add_resource(TaskResource, '/tasks', endpoint='tasks')
 api.add_resource(ProjectsResource, '/projects', endpoint='projects')
 api.add_resource(TeamsResource, '/teams', endpoint='teams')
+api.add_resource(ProjectIndex, '/projects/<int:project_id>', endpoint='project_index')
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)

@@ -110,7 +110,9 @@ function LeftNavigationBar()
           </div>
           <SubList isOpen={teamsOpen}>
             {teamData.map((team) => (
-              <SubItem key={team.id}>{team.name}</SubItem>
+              <SubItem key={team.id}>
+                <Link to={`/team/${team.id}`}>{team.name}</Link>
+              </SubItem>
             ))}
           </SubList>
         </NavItem>
@@ -121,7 +123,9 @@ function LeftNavigationBar()
           </div>
           <SubList isOpen={projectsOpen}>
             {projectData.map((project) => (
-              <SubItem key={project.id}>{project.name}</SubItem>
+              <SubItem key={project.id}>
+                <Link to={`/project/${project.id}`}>{project.name}</Link>
+              </SubItem>
             ))}
           </SubList>
         </NavItem>
