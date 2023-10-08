@@ -69,6 +69,7 @@ class Task(db.Model, SerializerMixin):
     status = Column(TASK_STATUS) 
     user_id = Column(Integer, ForeignKey('users.id'))
     project_id = Column(Integer, ForeignKey('projects.id'))
+    project = relationship('Project', back_populates='tasks')
 
     def to_dict(self, exclude_user=True):
         task_dict = super().to_dict()
@@ -89,6 +90,7 @@ class Project(db.Model, SerializerMixin):
     name = Column(String(100), nullable=False)
     description = Column(Text)
     users = relationship('User', secondary=project_membership, back_populates='projects')
+    tasks = relationship('Task', back_populates='project')
 
     def to_dict(self):
         project_dict = super().to_dict()
