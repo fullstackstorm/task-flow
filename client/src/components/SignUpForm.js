@@ -30,8 +30,7 @@ function SignUpForm() {
     } catch (error) {
       console.error("Error:", error);
     }
-    setSubmitting(false);
-
+    
     try {
       await fetch("http://127.0.0.1:5555/login", {
         method: "POST",
@@ -43,7 +42,7 @@ function SignUpForm() {
     } catch (error) {
       console.error("Error:", error);
     }
-
+    setSubmitting(false);
     history.push("/dashboard")
   };
 

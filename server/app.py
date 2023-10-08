@@ -3,7 +3,7 @@
 # Standard library imports
 
 # Remote library imports
-from flask import request, session, make_response
+from flask import request, session, make_response, url_for
 from flask_restful import Resource
 from sqlalchemy.exc import IntegrityError
 
@@ -46,7 +46,7 @@ class CheckSession(Resource):
             if user:
                 return make_response(user.to_dict(), 200)
 
-        return make_response({}, 401)
+        return make_response({'message': 'Could not verify authentication or could not find user.'}, 401)
 
 class Login(Resource):
     def post(self):
@@ -58,46 +58,56 @@ class Login(Resource):
 
         if user and user.authenticate(password):
             session['user_id'] = user.id
-            return make_response(user.to_dict(), 200)
-        
-        return make_response({}, 401)
+
+            response = make_response(user.to_dict(), 201)
+
+            return response
+        else:
+            # Unauthorized request
+            return make_response({'error': 'Authentication failed'}, 401)
+
     
 class Logout(Resource):
     def delete(self):
-        if session.get('user_id'):
+        user_id = session.get('user_id')
+        if user_id:
             session['user_id'] = None
-            return make_response({'message': 'Logged out successfully'}, 204) #Not returning message
+            response = make_response({'message': 'Logged out successfully'}, 204)
+            response.delete_cookie('user_id')
+            return response
         else:
             return make_response({'error': 'Not logged in'}, 401)
         
 class DeleteUser(Resource):
     def delete(self):
-        if session.get('user_id'):
-            user_id = session['user_id']
-            
-            # Delete the user from the database
-            try:
-                user = User.query.get(user_id)
-                if user:
-                    # Remove the user from the session
-                    session.pop('user_id')
-                     # Delete the user from the database
-                    db.session.delete(user)  
-                    db.session.commit()
-                    return {'message': f'Deleted user with ID {user_id}'}
-                else:
-                    return {'message': 'User not found in the database'}
-            except IntegrityError:
-                # Handle database integrity error
-                return {'message': 'Failed to delete user due to database integrity error'}
+        # Check if a session token exists in the client-side cookie
+        id = request.cookies.get('user_id')
+
+        if id:
+            user = User.query.filter_by(id=id).first()
+
+            if user:
+                # Delete the user from the database
+                db.session.delete(user)
+                db.session.commit()
+                # Clear the session token cookie on the client side
+                response = make_response({'message': 'User deleted successfully'})
+                return response
+            else:
+                return make_response({'message': 'User not found in the database'})
         else:
-            return {'message': 'User not authenticated'}
+            return make_response({'message': 'User not authenticated'})
+
         
 class TaskResource(Resource):
     def get(self):
+        user_id = session.get("user_id")  # Retrieve the user_id from the session
+        print(user_id)
         tasks = Task.query.all()
         tasks_dict = [task.to_dict() for task in tasks]
         return make_response(tasks_dict, 200)
+        
+
 
 api.add_resource(Signup, '/signup', endpoint='signup')
 api.add_resource(CheckSession, '/check_session', endpoint='check_session')

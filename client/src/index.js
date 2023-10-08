@@ -3,11 +3,16 @@ import App from "./components/App";
 import "./index.css";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter as Router } from "react-router-dom";
+import { StyleSheetManager } from 'styled-components';
+
+const shouldForwardProp = (prop) => prop !== 'isOpen';
 
 const container = document.getElementById("root");
 const root = createRoot(container);
 root.render(
-    <Router>
-        <App />
-    </Router>
+    <StyleSheetManager shouldForwardProp={shouldForwardProp}>
+        <Router>
+            <App />
+        </Router>
+    </StyleSheetManager>
 );

@@ -32,5 +32,7 @@ api = Api(app)
 
 # Instantiate CORS
 CORS(app)
+CORS_ALLOW_HEADERS = 'Content-Type'
+CORS_ORIGINS = '*'
 
 bcrypt = Bcrypt(app)
