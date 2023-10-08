@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 
@@ -54,6 +54,8 @@ function LeftNavigationBar()
   const [teamsOpen, setTeamsOpen] = useState(false);
   const [projectsOpen, setProjectsOpen] = useState(false);
   const [formOpen, setFormOpen] = useState(false);
+  const [teamData, setTeamData] = useState([]);
+  const [projectData, setProjectData] = useState([]);
 
   const toggleTeams = () =>
   {
@@ -69,6 +71,17 @@ function LeftNavigationBar()
   {
     setFormOpen(!formOpen);
   };
+
+  useEffect(() =>
+  {
+    fetch("/teams")
+      .then((response) => response.json())
+      .then((data) => setTeamData(data));
+
+    fetch("/projects")
+      .then((response) => response.json())
+      .then((data) => setProjectData(data));
+  }, []);
 
   return (
     <LeftNavContainer>
@@ -93,14 +106,22 @@ function LeftNavigationBar()
             Teams
             {teamsOpen ? "▼" : "▶"}
           </div>
-          <SubList isOpen={teamsOpen}></SubList>
+          <SubList isOpen={teamsOpen}>
+            {teamData.map((team) => (
+              <SubItem key={team.id}>{team.name}</SubItem>
+            ))}
+          </SubList>
         </NavItem>
         <NavItem onClick={toggleProjects}>
           <div>
             Projects
             {projectsOpen ? "▼" : "▶"}
           </div>
-          <SubList isOpen={projectsOpen}></SubList>
+          <SubList isOpen={projectsOpen}>
+            {projectData.map((project) => (
+              <SubItem key={project.id}>{project.name}</SubItem>
+            ))}
+          </SubList>
         </NavItem>
       </NavList>
     </LeftNavContainer>

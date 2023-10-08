@@ -137,6 +137,89 @@ class ProjectsResource(Resource):
         except Exception as e:
             return make_response({"error": str(e)}, 500)
         
+    def post(self):
+        try:
+            # Retrieve user_id from the session or authentication token
+            user_id = session.get("user_id")
+
+            if user_id is None:
+                return make_response({"message": "Authentication required"}, 401)
+
+            json = request.get_json()
+
+            project = Project(
+                name=json.get('name'),
+                description=json.get('description'),
+            )
+
+            user = User.query.filter_by(id=user_id).first()
+            user.projects.append(project)
+
+            users = json.get('users', [])
+
+            for email in users:
+                user_to_associate = User.query.filter_by(email=email).first()
+                if user_to_associate:
+                    project.users.append(user_to_associate)
+
+            db.session.add(project)
+            db.session.commit()
+
+            return make_response(project.to_dict(), 201)
+
+        except Exception as e:
+            return make_response({"error": str(e)}, 500)
+        
+class TeamsResource(Resource):
+    def get(self):
+        try:
+            user_id = session.get("user_id")
+
+            if user_id is None:
+                return make_response({"message": "Authentication required"}, 401)
+
+            teams = Team.query.filter(Project.users.any(id=user_id)).all()
+
+            teams_dict = [team.to_dict() for team in teams]
+
+            return make_response(teams_dict, 200)
+
+        except Exception as e:
+            return make_response({"error": str(e)}, 500)
+        
+    def post(self):
+        try:
+            # Retrieve user_id from the session or authentication token
+            user_id = session.get("user_id")
+
+            if user_id is None:
+                return make_response({"message": "Authentication required"}, 401)
+
+            json = request.get_json()
+
+            team = Team(
+                name=json.get('name'),
+                description=json.get('description'),
+            )
+
+            user = User.query.filter_by(id=user_id).first()
+            user.teams.append(team)
+
+            users = json.get('users', [])
+
+            for email in users:
+                user_to_associate = User.query.filter_by(email=email).first()
+                if user_to_associate:
+                    team.users.append(user_to_associate)
+
+            db.session.add(team)
+            db.session.commit()
+
+            return make_response(team.to_dict(), 201)
+
+        except Exception as e:
+            return make_response({"error": str(e)}, 500)
+        
 
 
 api.add_resource(Signup, '/signup', endpoint='signup')
@@ -146,6 +229,7 @@ api.add_resource(Logout, '/logout', endpoint='logout')
 api.add_resource(DeleteUser, '/delete_user', endpoint='delete_user')
 api.add_resource(TaskResource, '/tasks', endpoint='tasks')
 api.add_resource(ProjectsResource, '/projects', endpoint='projects')
+api.add_resource(TeamsResource, '/teams', endpoint='teams')
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
