@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 const LeftNavContainer = styled.nav`
   width: 250px;
-  background-color: #ccc;
+  background-color: #333;
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -34,6 +34,12 @@ const SubItem = styled.li`
   margin: 4px 0;
 `;
 
+// Styled Link for the "Home" button
+const HomeLink = styled(Link)`
+  color: inherit; /* Inherit the text color from the parent */
+  text-decoration: none; /* Remove the default underline */
+`;
+
 function LeftNavigationBar() {
   const [teamsOpen, setTeamsOpen] = useState(false);
   const [projectsOpen, setProjectsOpen] = useState(false);
@@ -55,7 +61,7 @@ function LeftNavigationBar() {
     <LeftNavContainer>
       <NavList>
         <NavItem>
-          <Link to="/dashboard">Home</Link>
+          <HomeLink to="/dashboard">Home</HomeLink>
         </NavItem>
         <NavItem onClick={toggleForm}>
           <div>
@@ -63,12 +69,8 @@ function LeftNavigationBar() {
             {formOpen ? "▼" : "▶"}
           </div>
           <SubList isOpen={formOpen}>
-            <SubItem>
-                Team
-            </SubItem>
-            <SubItem>
-                Project
-            </SubItem>
+            <SubItem>Team</SubItem>
+            <SubItem>Project</SubItem>
           </SubList>
         </NavItem>
         <NavItem onClick={toggleTeams}>

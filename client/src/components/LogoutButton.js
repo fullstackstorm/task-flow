@@ -33,6 +33,8 @@ function LogoutButton()
                 {
                     history.push('/'); // Redirect to the main page
                 }
+
+                window.location.reload();
             })
             .catch((error) =>
             {

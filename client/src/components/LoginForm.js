@@ -30,6 +30,8 @@ function LoginForm() {
     setSubmitting(false);
 
     history.push("/dashboard")
+
+    window.location.reload();
   };
 
   return (
