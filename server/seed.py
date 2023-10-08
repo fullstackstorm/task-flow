@@ -153,7 +153,7 @@ def seed_database():
     num_users = 10
     num_teams = 5
     num_projects = 20
-    num_tasks = 50
+    num_tasks = 200
     num_comments = 100
     
     print("Creating users. . .")
