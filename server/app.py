@@ -104,7 +104,6 @@ class TaskResource(Resource):
         try:
             # Retrieve user_id from the session or authentication token
             user_id = session.get("user_id")
-            print(user_id)
 
             if user_id is None:
                 return make_response({"message": "Authentication required"}, 401)
@@ -112,15 +111,11 @@ class TaskResource(Resource):
             # Fetch tasks associated with the user
             tasks = Task.query.filter_by(user_id=user_id).all()
 
-            print(tasks)
-
             # Convert tasks to a list of dictionaries
             tasks_dict = [task.to_dict() for task in tasks]
 
-            print(tasks_dict)
-
             # Return a JSON response
-            return make_response({"tasks": tasks_dict}, 200)
+            return make_response(tasks_dict, 200)
 
         except Exception as e:
             return make_response({"error": str(e)}, 500)

@@ -60,7 +60,13 @@ class User(db.Model, SerializerMixin):
 class Task(db.Model, SerializerMixin):
     __tablename__ = 'tasks'
 
-    serialize_rules = ('-users.tasks', '-projects.tasks',)
+    serialize_rules = ('-user.tasks', '-projects.tasks', '-user',)
+
+    def to_dict(self, exclude_user=True):
+        task_dict = super().to_dict()
+        if exclude_user:
+            task_dict.pop('user', None)
+        return task_dict
 
     id = Column(Integer, primary_key=True)
     title = Column(String(100), nullable=False)
