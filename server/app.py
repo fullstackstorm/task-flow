@@ -100,7 +100,7 @@ class DeleteUser(Resource):
 
         
 class TaskResource(Resource):
-    def get(self):
+    def get(self, task_id=None):  # Add a parameter to accept task_id
         try:
             # Retrieve user_id from the session or authentication token
             user_id = session.get("user_id")
@@ -108,17 +108,73 @@ class TaskResource(Resource):
             if user_id is None:
                 return make_response({"message": "Authentication required"}, 401)
 
-            # Fetch tasks associated with the user
-            tasks = Task.query.filter_by(user_id=user_id).all()
+            if task_id is not None:
+                task = Task.query.filter_by(id=task_id).first()
 
-            # Convert tasks to a list of dictionaries
-            tasks_dict = [task.to_dict() for task in tasks]
+                if task is None:
+                    return make_response({"message": "Task not found"}, 404)
 
-            # Return a JSON response
-            return make_response(tasks_dict, 200)
+                # Convert the task to a dictionary
+                task_dict = task.to_dict()
+
+                # Return a JSON response
+                return make_response(task_dict, 200)
+
+            else:
+                # Fetch tasks associated with the user
+                tasks = Task.query.filter_by(user_id=user_id).all()
+
+                # Convert tasks to a list of dictionaries
+                tasks_dict = [task.to_dict() for task in tasks]
+
+                # Return a JSON response
+                return make_response(tasks_dict, 200)
+        except Exception as e:
+            return make_response({"error": str(e)}, 500)
+    def put(self, task_id):
+        try:
+            user_id = session.get("user_id")
+
+            if user_id is None:
+                return make_response({"message": "Authentication required"}, 401)
+
+            task = Task.query.filter_by(id=task_id).first()
+
+            if task is None:
+                return make_response({"message": "Task not found"}, 404)
+
+            # Update the task status based on the request data
+            data = request.get_json()
+            if "status" in data:
+                task.status = data["status"]
+
+            db.session.commit()
+
+            return make_response(task.to_dict(), 200)
 
         except Exception as e:
             return make_response({"error": str(e)}, 500)
+
+    def delete(self, task_id):
+        try:
+            user_id = session.get("user_id")
+
+            if user_id is None:
+                return make_response({"message": "Authentication required"}, 401)
+
+            task = Task.query.filter_by(id=task_id).first()
+
+            if task is None:
+                return make_response({"message": "Task not found"}, 404)
+
+            db.session.delete(task)
+            db.session.commit()
+
+            return make_response({"message": "Task deleted"}, 200)
+
+        except Exception as e:
+            return make_response({"error": str(e)}, 500)       
+
         
 class ProjectsResource(Resource):
     def get(self):
@@ -244,7 +300,7 @@ api.add_resource(CheckSession, '/check_session', endpoint='check_session')
 api.add_resource(Login, '/login', endpoint='login')
 api.add_resource(Logout, '/logout', endpoint='logout')
 api.add_resource(DeleteUser, '/delete_user', endpoint='delete_user')
-api.add_resource(TaskResource, '/tasks', endpoint='tasks')
+api.add_resource(TaskResource, '/tasks', '/tasks/<int:task_id>', endpoint='tasks')
 api.add_resource(ProjectsResource, '/projects', endpoint='projects')
 api.add_resource(TeamsResource, '/teams', endpoint='teams')
 api.add_resource(ProjectIndex, '/projects/<int:project_id>', endpoint='project_index')

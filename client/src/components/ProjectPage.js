@@ -77,7 +77,7 @@ function TaskSection({ title, tasks })
                     {tasks.map((task) => (
                         <TableRow key={task.id}>
                             <TableData>
-                                <StyledLink to={`/tasks/${task.id}`}>{task.title}</StyledLink>
+                                <StyledLink to={`/task/${task.id}`}>{task.title}</StyledLink>
                             </TableData>
                             <TableData>{new Date(task.due_date).toLocaleDateString()}</TableData>
                         </TableRow>

@@ -60,7 +60,7 @@ class User(db.Model, SerializerMixin):
 class Task(db.Model, SerializerMixin):
     __tablename__ = 'tasks'
 
-    serialize_only = ('id', 'title', 'description', 'due_date','status',)
+    serialize_only = ('id', 'title', 'description', 'due_date','status', 'project_id')
 
     id = Column(Integer, primary_key=True)
     title = Column(String(100), nullable=False)
