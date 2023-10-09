@@ -9,6 +9,8 @@ import CreateProjectPage from "./CreateProjectPage";
 import Dashboard from "./Dashboard";
 import ProjectPage from "./ProjectPage";
 import TaskDetail from "./TaskDetail";
+import TeamDetail from "./TeamDetail";
+import CreateTaskPage from "./CreateTaskPage";
 
 function App()
 {
@@ -39,6 +41,12 @@ function App()
         </Route>
         <Route exact path="/task/:id">
           <TaskDetail />
+        </Route>
+        <Route exact path="/team/:id">
+          <TeamDetail />
+        </Route>
+        <Route exact path="/createtask">
+          <CreateTaskPage />
         </Route>
       </Switch>
     </div>

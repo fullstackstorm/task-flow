@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useHistory } from 'react-router-dom'; // Import useHistory
+import { useParams, Link, useHistory } from 'react-router-dom';
 import LeftNavigationBar from "./LeftNavigationBar";
 import styled from 'styled-components';
 
@@ -71,6 +71,10 @@ const Button = styled.button`
   margin-right: 10px;
 `;
 
+const CreateTaskButton = styled(Button)`
+  background-color: green; /* Change the button color to green for creating tasks */
+`;
+
 function TaskSection({ title, tasks }) {
   return (
     <div>
@@ -99,7 +103,7 @@ function TaskSection({ title, tasks }) {
 
 function ProjectPage() {
   const { id } = useParams();
-  const history = useHistory(); // Initialize useHistory
+  const history = useHistory();
   const [project, setProject] = useState({
     pendingTasks: [],
     inProgressTasks: [],
@@ -135,15 +139,33 @@ function ProjectPage() {
       });
   };
 
+  const handleCreateTask = () => {
+    fetch('/check_session', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        const user_id = data.id;
+        history.push(`/createtask?projectId=${project.id}&userId=${user_id}`);
+      })
+      .catch((error) => {
+        console.error('Error fetching user ID:', error);
+      });
+  };  
+
   return (
     <PageContainer>
       <LeftNavigationBar />
       <BoxContainer>
         <Heading>{project.name}</Heading>
+        <CreateTaskButton onClick={handleCreateTask}>Create Task</CreateTaskButton>
         <TaskSection title="Pending Tasks" tasks={project.pendingTasks} />
         <TaskSection title="In Progress Tasks" tasks={project.inProgressTasks} />
         <TaskSection title="Completed Tasks" tasks={project.completedTasks} />
-        <Button onClick={handleDeleteProject}>Delete Project</Button> {/* Add the Delete Project button */}
+        <Button onClick={handleDeleteProject}>Delete Project</Button>
       </BoxContainer>
     </PageContainer>
   );

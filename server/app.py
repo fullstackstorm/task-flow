@@ -6,6 +6,7 @@
 from flask import request, session, make_response, url_for
 from flask_restful import Resource
 from sqlalchemy.exc import IntegrityError
+from datetime import datetime
 
 # Local imports
 from config import app, db, api
@@ -154,7 +155,6 @@ class TaskResource(Resource):
 
         except Exception as e:
             return make_response({"error": str(e)}, 500)
-
     def delete(self, task_id):
         try:
             user_id = session.get("user_id")
@@ -173,7 +173,37 @@ class TaskResource(Resource):
             return make_response({"message": "Task deleted"}, 200)
 
         except Exception as e:
-            return make_response({"error": str(e)}, 500)       
+            return make_response({"error": str(e)}, 500)  
+    def post(self):
+        try:
+            user_id = session.get("user_id")
+
+            if user_id is None:
+                return make_response({"message": "Authentication required"}, 401)
+
+            data = request.get_json()
+
+            if "title" not in data or "description" not in data or "due_date" not in data:
+                return make_response({"message": "Incomplete task data"}, 400)
+            due_date_str = data["due_date"]
+            due_date = datetime.strptime(due_date_str, "%Y-%m-%d")
+
+            new_task = Task(
+                title=data["title"],
+                description=data["description"],
+                due_date=due_date,
+                status=data.get("status", "PENDING"),  # Provide a default status
+                project_id=data.get("project_id"),
+                user_id=user_id,
+            )
+
+            db.session.add(new_task)
+            db.session.commit()
+
+            return make_response({"message": "Task created successfully", "task_id": new_task.id}, 201)
+
+        except Exception as e:
+            return make_response({"error": str(e)}, 500)     
 
         
 class ProjectsResource(Resource):
@@ -184,8 +214,11 @@ class ProjectsResource(Resource):
             if user_id is None:
                 return make_response({"message": "Authentication required"}, 401)
 
-            projects = Project.query.filter(Project.users.any(id=user_id)).all()
+            user = User.query.filter_by(id=user_id).first()
 
+            project_ids = [project.id for project in user.projects]
+
+            projects = Project.query.filter(Project.id.in_(project_ids)).all()
             projects_dict = [project.to_dict() for project in projects]
 
             return make_response(projects_dict, 200)
@@ -233,9 +266,12 @@ class TeamsResource(Resource):
 
             if user_id is None:
                 return make_response({"message": "Authentication required"}, 401)
+            
+            user = User.query.filter_by(id=user_id).first()
 
-            teams = Team.query.filter(Project.users.any(id=user_id)).all()
+            team_ids = [team.id for team in user.teams]
 
+            teams = Team.query.filter(Team.id.in_(team_ids)).all()
             teams_dict = [team.to_dict() for team in teams]
 
             return make_response(teams_dict, 200)
@@ -324,6 +360,53 @@ class ProjectIndex(Resource):
 
         except Exception as e:
             return make_response({"error": str(e)}, 500)
+        
+class TeamIndex(Resource):
+    def get(self, team_id):
+        try:
+            # Retrieve user_id from the session or authentication token
+            user_id = session.get("user_id")
+
+            if user_id is None:
+                return make_response({"message": "Authentication required"}, 401)
+
+            team = Team.query.filter_by(id=team_id).first()
+
+            if team:
+                return make_response(team.to_dict(), 200)
+            else:
+                return make_response({"message": "Team not found"}, 404)
+
+        except Exception as e:
+            return make_response({"error": str(e)}, 500)
+
+    def delete(self, team_id):
+        try:
+            # Retrieve user_id from the session or authentication token
+            user_id = session.get("user_id")
+
+            if user_id is None:
+                return make_response({"message": "Authentication required"}, 401)
+
+            # Find the team to delete
+            team = Team.query.filter_by(id=team_id).first()
+
+            if team is None:
+                return make_response({"message": "Team not found or unauthorized"}, 404)
+
+            # Delete associated users (if necessary)
+            for user in team.users:
+                team.users.remove(user)
+                db.session.commit()  # Commit the removal
+
+            # Delete the team
+            db.session.delete(team)
+            db.session.commit()
+
+            return make_response({"message": "Team deleted successfully"}, 200)
+
+        except Exception as e:
+            return make_response({"error": str(e)}, 500)
 
 api.add_resource(Signup, '/signup', endpoint='signup')
 api.add_resource(CheckSession, '/check_session', endpoint='check_session')
@@ -334,6 +417,7 @@ api.add_resource(TaskResource, '/tasks', '/tasks/<int:task_id>', endpoint='tasks
 api.add_resource(ProjectsResource, '/projects', endpoint='projects')
 api.add_resource(TeamsResource, '/teams', endpoint='teams')
 api.add_resource(ProjectIndex, '/projects/<int:project_id>', endpoint='project_index')
+api.add_resource(TeamIndex, '/teams/<int:team_id>', endpoint='team_index')
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
