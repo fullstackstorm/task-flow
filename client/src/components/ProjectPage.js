@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useHistory } from 'react-router-dom'; // Import useHistory
 import LeftNavigationBar from "./LeftNavigationBar";
 import styled from 'styled-components';
 
@@ -37,10 +37,10 @@ const HeaderRow = styled.tr`
 
 const TableRow = styled.tr`
   border-bottom: 1px solid #ddd;
-  transition: background-color 0.3s; /* Add a smooth transition effect */
-  
+  transition: background-color 0.3s;
+
   &:hover {
-    background-color: #ccc; /* Change the background color on hover */
+    background-color: #ccc;
   }
   a {
     text-decoration: none;
@@ -61,69 +61,92 @@ const TableData = styled.td`
   padding: 10px;
 `;
 
-function TaskSection({ title, tasks })
-{
-    return (
-        <div>
-            <h3>{title}</h3>
-            <Table>
-                <TableHead>
-                    <HeaderRow>
-                        <TableHeader>Task</TableHeader>
-                        <TableHeader>Due Date</TableHeader>
-                    </HeaderRow>
-                </TableHead>
-                <tbody>
-                    {tasks.map((task) => (
-                        <TableRow key={task.id}>
-                            <TableData>
-                                <StyledLink to={`/task/${task.id}`}>{task.title}</StyledLink>
-                            </TableData>
-                            <TableData>{new Date(task.due_date).toLocaleDateString()}</TableData>
-                        </TableRow>
-                    ))}
-                </tbody>
-            </Table>
-        </div>
-    );
+const Button = styled.button`
+  background-color: red;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: 10px;
+`;
+
+function TaskSection({ title, tasks }) {
+  return (
+    <div>
+      <h3>{title}</h3>
+      <Table>
+        <TableHead>
+          <HeaderRow>
+            <TableHeader>Task</TableHeader>
+            <TableHeader>Due Date</TableHeader>
+          </HeaderRow>
+        </TableHead>
+        <tbody>
+          {tasks.map((task) => (
+            <TableRow key={task.id}>
+              <TableData>
+                <StyledLink to={`/task/${task.id}`}>{task.title}</StyledLink>
+              </TableData>
+              <TableData>{new Date(task.due_date).toLocaleDateString()}</TableData>
+            </TableRow>
+          ))}
+        </tbody>
+      </Table>
+    </div>
+  );
 }
 
-function ProjectPage()
-{
-    const { id } = useParams();
-    const [project, setProject] = useState({
-        pendingTasks: [],
-        inProgressTasks: [],
-        completedTasks: [],
-    });
+function ProjectPage() {
+  const { id } = useParams();
+  const history = useHistory(); // Initialize useHistory
+  const [project, setProject] = useState({
+    pendingTasks: [],
+    inProgressTasks: [],
+    completedTasks: [],
+  });
 
-    useEffect(() =>
-    {
-        // Fetch project data using the ID from the URL
-        fetch(`/projects/${id}`)
-            .then((response) => response.json())
-            .then((data) =>
-            {
-                const { tasks } = data;
-                const pendingTasks = tasks.filter(task => task.status === 'pending');
-                const inProgressTasks = tasks.filter(task => task.status === 'in progress');
-                const completedTasks = tasks.filter(task => task.status === 'completed');
+  useEffect(() => {
+    // Fetch project data using the ID from the URL
+    fetch(`/projects/${id}`)
+      .then((response) => response.json())
+      .then((data) => {
+        const { tasks } = data;
+        const pendingTasks = tasks.filter((task) => task.status === 'pending');
+        const inProgressTasks = tasks.filter((task) => task.status === 'in progress');
+        const completedTasks = tasks.filter((task) => task.status === 'completed');
 
-                setProject({ pendingTasks, inProgressTasks, completedTasks, ...data });
-            });
-    }, [id]);
+        setProject({ pendingTasks, inProgressTasks, completedTasks, ...data });
+      });
+  }, [id]);
 
-    return (
-        <PageContainer>
-            <LeftNavigationBar />
-            <BoxContainer>
-                <Heading>{project.name}</Heading>
-                <TaskSection title="Pending Tasks" tasks={project.pendingTasks} />
-                <TaskSection title="In Progress Tasks" tasks={project.inProgressTasks} />
-                <TaskSection title="Completed Tasks" tasks={project.completedTasks} />
-            </BoxContainer>
-        </PageContainer>
-    );
+  const handleDeleteProject = () => {
+    // Send a request to delete the project on the server
+    fetch(`/projects/${id}`, {
+      method: "DELETE",
+    })
+      .then((response) => {
+        if (response.ok) {
+          // Redirect to a project list page or another appropriate location
+          history.push("/dashboard"); // Example: Redirect to the project list page
+        } else {
+          // Handle error, e.g., show an error message
+        }
+      });
+  };
+
+  return (
+    <PageContainer>
+      <LeftNavigationBar />
+      <BoxContainer>
+        <Heading>{project.name}</Heading>
+        <TaskSection title="Pending Tasks" tasks={project.pendingTasks} />
+        <TaskSection title="In Progress Tasks" tasks={project.inProgressTasks} />
+        <TaskSection title="Completed Tasks" tasks={project.completedTasks} />
+        <Button onClick={handleDeleteProject}>Delete Project</Button> {/* Add the Delete Project button */}
+      </BoxContainer>
+    </PageContainer>
+  );
 }
 
 export default ProjectPage;

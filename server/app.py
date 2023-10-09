@@ -294,6 +294,36 @@ class ProjectIndex(Resource):
 
         except Exception as e:
             return make_response({"error": str(e)}, 500)
+    def delete(self, project_id):
+        try:
+            # Retrieve user_id from the session or authentication token
+            user_id = session.get("user_id")
+
+            if user_id is None:
+                return make_response({"message": "Authentication required"}, 401)
+
+            # Find the project to delete
+            project = Project.query.filter_by(id=project_id).first()
+
+            if project is None:
+                return make_response({"message": "Project not found or unauthorized"}, 404)
+
+            # Delete associated tasks
+            Task.query.filter_by(project_id=project.id).delete()
+
+            # Delete associated users (if necessary)
+            for user in project.users:
+                project.users.remove(user)
+                db.session.commit()  # Commit the removal
+
+            # Delete the project
+            db.session.delete(project)
+            db.session.commit()
+
+            return make_response({"message": "Project deleted successfully"}, 200)
+
+        except Exception as e:
+            return make_response({"error": str(e)}, 500)
 
 api.add_resource(Signup, '/signup', endpoint='signup')
 api.add_resource(CheckSession, '/check_session', endpoint='check_session')
