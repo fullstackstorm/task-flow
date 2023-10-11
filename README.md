@@ -105,6 +105,10 @@ To run this web application, follow the steps below:
 
 TaskFlow should now be running in your web browser. Start interacting with the application and enjoy!
 
+## Project Notes
+I wouldn't consider this a complete porject. There are many things that I plan on implementing such as better css
+styling, deployment, and features like inviting members via email. 
+
 ## Contributing
 
 I will not be looking at contributions as this is a project for increasing my skills.
