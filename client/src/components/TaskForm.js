@@ -131,16 +131,6 @@ function TaskForm({ projectID, userID })
                             <ErrorMessage name="due_date" component={ErrorMessageContainer} />
                         </FormGroup>
 
-                        <FormGroup>
-                            <Label>Status:</Label>
-                            <FormField as="select" name="status">
-                                <option value="PENDING">Pending</option>
-                                <option value="IN_PROGRESS">In Progress</option>
-                                <option value="COMPLETED">Completed</option>
-                            </FormField>
-                            <ErrorMessage name="status" component={ErrorMessageContainer} />
-                        </FormGroup>
-
                         <SubmitButton type="submit">Create Task</SubmitButton>
                     </Form>
                 )}
